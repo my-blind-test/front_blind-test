@@ -1,8 +1,10 @@
 import { Link } from "react-router-dom";
+import HomeBar from "../Components/HomeBar";
 
 export default function Home() {
     return (
         <div className="Home">
+            <HomeBar />
             <h1>Home</h1>
             <nav>
                 <ul>

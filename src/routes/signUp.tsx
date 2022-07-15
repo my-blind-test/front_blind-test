@@ -9,18 +9,36 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import api from '../utils/api';
+import { Alert } from '@mui/material';
 
 const theme = createTheme();
 
 export default function SignUp() {
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    const [errorMessage, setErrorMessage] = React.useState("");
+    let navigate = useNavigate();
+
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
-        console.log({
-            username: data.get('username'),
-            password: data.get('password'),
-        });
+        const response = await api.post("/auth/register",
+            {
+                name: data.get('username'),
+                password: data.get('password')
+            })
+            .catch((err) => {
+                if (err.statusCode === 400) {
+                    setErrorMessage(err.message)
+                } else {
+                    setErrorMessage("An error occured, please try again later.")
+                }
+            })
+
+        if (response) {
+            navigate("/login");
+        }
+
     };
 
     return (
@@ -65,14 +83,21 @@ export default function SignUp() {
                                 />
                             </Grid>
                         </Grid>
+                        {errorMessage ?
+                            <Alert variant="outlined" severity="error" sx={{ mt: 2, mb: 2, display: 'line' }} >
+                                {errorMessage}
+                            </Alert>
+                            : null
+                        }
                         <Button
                             type="submit"
                             fullWidth
                             variant="contained"
-                            sx={{ mt: 3, mb: 2 }}
+                            sx={{ mt: 2, mb: 2 }}
                         >
-                            Sign Up
+                            Sign In
                         </Button>
+
                         <Grid container justifyContent="flex-end">
                             <Grid item>
                                 <Link to="/login" style={{ color: 'inherit', textDecoration: 'inherit' }}>

@@ -6,8 +6,11 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import { Link } from 'react-router-dom';
 import { Avatar } from '@mui/material';
+import { useCurrentUser } from '../utils/CurrentUserContext';
 
 export default function HomeBar() {
+    const { currentUser } = useCurrentUser()
+
     return (
         <Box sx={{ flexGrow: 1 }}>
             <AppBar position="static">
@@ -22,16 +25,25 @@ export default function HomeBar() {
                         </Link>
                     </Typography>
 
-                    <Link to="/register" style={{ color: 'inherit', textDecoration: 'inherit' }}>
-                        <Button color="inherit">
-                            Register
-                        </Button>
-                    </Link>
-                    <Link to="/login" style={{ color: 'inherit', textDecoration: 'inherit' }}>
-                        <Button color="inherit">
-                            Login
-                        </Button>
-                    </Link>
+
+                    {currentUser ?
+                        <Link to="/profile" style={{ color: 'inherit', textDecoration: 'inherit' }}>
+                            {currentUser.name}
+                        </Link>
+                        :
+                        <div>
+                            <Link to="/register" style={{ color: 'inherit', textDecoration: 'inherit' }}>
+                                <Button color="inherit">
+                                    Register
+                                </Button>
+                            </Link>
+                            <Link to="/login" style={{ color: 'inherit', textDecoration: 'inherit' }}>
+                                <Button color="inherit">
+                                    Login
+                                </Button>
+                            </Link>
+                        </div>
+                    }
                 </Toolbar>
             </AppBar>
         </Box>

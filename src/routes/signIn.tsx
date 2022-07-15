@@ -14,11 +14,13 @@ import { Alert } from '@mui/material';
 import api from '../utils/api';
 import { storeAccessToken } from '../utils/accessToken';
 import { useNavigate } from "react-router-dom";
+import { useCurrentUser } from '../utils/CurrentUserContext';
 
 const theme = createTheme();
 
 export default function SignIn() {
     const [errorMessage, setErrorMessage] = React.useState("");
+    const { fetchCurrentUser } = useCurrentUser()
     let navigate = useNavigate();
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -40,6 +42,7 @@ export default function SignIn() {
         if (response) {
             setErrorMessage("")
             storeAccessToken(response.access_token)
+            fetchCurrentUser()
             navigate("/");
         }
     };

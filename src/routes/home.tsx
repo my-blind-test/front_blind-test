@@ -1,7 +1,13 @@
+import React from "react";
 import { Link } from "react-router-dom";
 import HomeBar from "../Components/HomeBar";
+import { useCurrentUser } from "../utils/CurrentUserContext";
 
 export default function Home() {
+    const { fetchCurrentUser } = useCurrentUser()
+
+    React.useEffect(() => { fetchCurrentUser() })
+
     return (
         <div className="Home">
             <HomeBar />

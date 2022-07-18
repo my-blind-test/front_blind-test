@@ -16,24 +16,27 @@ function renderRow(props: ListChildComponentProps) {
         </ListItem>
     );
 }
-export default function UserList(props: any) {
 
-    const usersCount = Object.keys(props.users).length
+export default function UserList(props: any) {
+    const dataCount = Object.keys(props.data).length
 
     return (
-        <Box
-            sx={{ width: '100%', height: 400, maxWidth: 360, bgcolor: 'background.paper' }}
-        >
-            <VariableSizeList
-                height={400}
-                width={360}
-                itemSize={() => 50}
-                itemCount={usersCount}
-                overscanCount={5}
-                itemData={props.users}
+        <div>
+            <h3>{props.listName}</h3>
+            <Box
+                sx={{ width: '100%', height: 400, maxWidth: 360, bgcolor: 'background.paper' }}
             >
-                {renderRow}
-            </VariableSizeList>
-        </Box>
+                <VariableSizeList
+                    height={400}
+                    width={360}
+                    itemSize={() => 50}
+                    itemCount={dataCount}
+                    overscanCount={5}
+                    itemData={props.data}
+                >
+                    {renderRow}
+                </VariableSizeList>
+            </Box>
+        </div>
     );
 }

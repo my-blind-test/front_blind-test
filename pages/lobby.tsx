@@ -9,7 +9,7 @@ import { getStoredAccessToken } from '../utils/accessToken';
 
 const socket = io("http://localhost:3000/lobby", {
     auth: {
-        token: getStoredAccessToken()
+        token: getStoredAccessToken() //TODO : fixer pour la prod (pas acces à ça SSR)
     }
 });
 

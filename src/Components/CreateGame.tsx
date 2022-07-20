@@ -9,7 +9,7 @@ export default function CreateGame(props: any) {
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget)
-        props.callback(data.get('name'), data.get('password'))
+        props.onCreateGame(data.get('name'), data.get('password'))
     };
 
     return (

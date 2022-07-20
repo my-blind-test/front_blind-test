@@ -24,11 +24,11 @@ export default function UserList(props: any) {
         <div>
             <h3>{props.listName}</h3>
             <Box
-                sx={{ width: '100%', height: 400, maxWidth: 360, bgcolor: 'background.paper' }}
+                sx={{ width: '100%', height: 300, maxWidth: 250, bgcolor: 'background.paper' }}
             >
                 <VariableSizeList
-                    height={400}
-                    width={360}
+                    height={300}
+                    width={250}
                     itemSize={() => 50}
                     itemCount={dataCount}
                     overscanCount={5}

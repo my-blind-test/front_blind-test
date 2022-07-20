@@ -1,7 +1,8 @@
-import { Alert, Box, Button, Grid } from '@mui/material';
+import { Alert, Box, Grid } from '@mui/material';
 import { useEffect, useState } from 'react';
 import io from 'socket.io-client';
 import CreateGame from '../Components/CreateGame';
+import Dancefloor from '../Components/Dancefloor';
 import List from '../Components/List';
 import { getStoredAccessToken } from '../utils/accessToken';
 
@@ -10,6 +11,16 @@ const socket = io("http://localhost:3000/lobby", {
         token: getStoredAccessToken()
     }
 });
+
+//Voir les petits bonhommes de tout le monde au lobby (only les 20 plus haut lvl)
+// update/delete une Game
+// Rejoindre une game
+// Voir les petits bonhomes de tout le monde dans la game
+// Envoyer des messages dans la game
+// Avoir un scoreboard dans la game
+// Deviner une musique dans la game
+// Jouer une musique dans la game
+// Déguiser les petits bonhommes
 
 export default function Lobby() {
     const [errorMessage, setErrorMessage] = useState("");
@@ -59,34 +70,31 @@ export default function Lobby() {
         };
     }, [connectedUsers, games]);
 
+    const onCreateGame = (name: string, password: string) => {
+        socket.emit("createGame", { name, password }, (response: any) => {
+            setErrorMessage(response.status === 'OK' ? "" : response.content)
+        })
+    }
+
     return (
         <div className="Lobby">
             <h1>Lobby</h1>
             <Box sx={{ flexGrow: 1 }}>
                 <Grid container spacing={5}>
                     <Grid item xs>
-                        <List listName="Users" data={connectedUsers} />
+                        <List listName="Games" data={games} />
                     </Grid>
                     <Grid item xs>
-                        <List listName="Games" data={games} />
+                        <CreateGame onCreateGame={(name: string, password: string) => onCreateGame(name, password)} />
+                        {errorMessage &&
+                            <Alert variant="outlined" severity="error" sx={{ mt: 2, mb: 2, display: 'line' }} >
+                                {errorMessage}
+                            </Alert>
+                        }
                     </Grid>
                 </Grid>
             </Box>
-            <CreateGame callback={(name: string, password: string) => {
-                socket.emit("createGame", { name, password }, (response: any) => {
-                    if (response.status === 'OK') {
-                        setErrorMessage("")
-                    } else {
-                        setErrorMessage(response.content)
-                    }
-                })
-            }} />
-            {errorMessage ?
-                <Alert variant="outlined" severity="error" sx={{ mt: 2, mb: 2, display: 'line' }} >
-                    {errorMessage}
-                </Alert>
-                : null
-            }
+            <Dancefloor users={connectedUsers} />
         </div >
     );
 }

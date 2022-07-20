@@ -1,50 +1,46 @@
-import * as React from 'react';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import CssBaseline from '@mui/material/CssBaseline';
-import TextField from '@mui/material/TextField';
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
+import { Alert, Avatar, Box, Button, Container, Grid, TextField, Typography } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { Link, useNavigate } from 'react-router-dom';
-import api from '../utils/api';
-import { Alert } from '@mui/material';
+import Link from 'next/link';
+import styles from '../styles/Home.module.css'
+import { storeAccessToken } from '../utils/accessToken';
+import api from "../utils/api"
+import { useCurrentUserContext } from '../context/CurrentUserContext';
+import { useState } from 'react';
+import { useRouter } from 'next/router';
 
-const theme = createTheme();
+export default function Login() {
+    const [errorMessage, setErrorMessage] = useState("");
+    const { fetchCurrentUser } = useCurrentUserContext()
 
-export default function SignUp() {
-    const [errorMessage, setErrorMessage] = React.useState("");
-    let navigate = useNavigate();
+    const router = useRouter();
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        const data = new FormData(event.currentTarget);
-        const response = await api.post("/auth/register",
+        const data = new FormData(event.currentTarget)
+        const response = await api.post("/auth/login",
             {
-                name: data.get('username'),
+                username: data.get('username'),
                 password: data.get('password')
             })
             .catch((err) => {
-                if (err.statusCode === 400) {
-                    setErrorMessage(err.message)
+                if (err.status === 401) {
+                    setErrorMessage("Couldn't sign in, please check the credentials.")
                 } else {
                     setErrorMessage("An error occured, please try again later.")
                 }
             })
 
         if (response) {
-            navigate("/login");
+            setErrorMessage("")
+            storeAccessToken(response.access_token)
+            fetchCurrentUser?.()
+            router.push("/");
         }
-
     };
 
     return (
-        <ThemeProvider theme={theme}>
+        <div className={styles.container}>
             <Container component="main" maxWidth="xs">
-                <CssBaseline />
                 <Box
                     sx={{
                         marginTop: 8,
@@ -57,7 +53,7 @@ export default function SignUp() {
                         <LockOutlinedIcon />
                     </Avatar>
                     <Typography component="h1" variant="h5">
-                        Sign up
+                        Sign In
                     </Typography>
                     <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
                         <Grid container spacing={2}>
@@ -97,17 +93,17 @@ export default function SignUp() {
                         >
                             Sign In
                         </Button>
-
                         <Grid container justifyContent="flex-end">
                             <Grid item>
-                                <Link to="/login" style={{ color: 'inherit', textDecoration: 'inherit' }}>
-                                    Already have an account? Sign in
+                                <Link href="/register">
+                                    {"Don't have an account? Sign Up"}
                                 </Link>
                             </Grid>
                         </Grid>
                     </Box>
                 </Box>
             </Container>
-        </ThemeProvider>
-    );
+
+        </div>
+    )
 }

@@ -17,7 +17,7 @@ function renderRow(props: ListChildComponentProps) {
     );
 }
 
-export default function UserList(props: any) {
+export default function List(props: any) {
     const dataCount = Object.keys(props.data).length
 
     return (

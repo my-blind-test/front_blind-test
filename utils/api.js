@@ -24,16 +24,21 @@ const api = (method, url, variables) =>
         resolve(response.data);
       },
       (error) => {
-        reject(error.response.data);
+        const response = {
+          status: error.response.status,
+          message: error.response.statusText,
+        };
+        reject(response);
       }
     );
   });
 
-// eslint-disable-next-line import/no-anonymous-default-export
-export default {
+const methods = {
   get: (...args) => api("get", ...args),
   post: (...args) => api("post", ...args),
   put: (...args) => api("put", ...args),
   patch: (...args) => api("patch", ...args),
   delete: (...args) => api("delete", ...args),
 };
+
+export default methods;

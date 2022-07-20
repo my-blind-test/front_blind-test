@@ -1,9 +1,10 @@
 import { Alert, Box, Grid } from '@mui/material';
 import { useEffect, useState } from 'react';
-import io from 'socket.io-client';
-import CreateGame from '../Components/CreateGame';
-import Dancefloor from '../Components/Dancefloor';
-import List from '../Components/List';
+import { io } from 'socket.io-client';
+import CreateGame from '../components/CreateGame';
+import Dancefloor from '../components/Dancefloor';
+import List from '../components/List';
+import styles from '../styles/Home.module.css'
 import { getStoredAccessToken } from '../utils/accessToken';
 
 const socket = io("http://localhost:3000/lobby", {
@@ -77,7 +78,7 @@ export default function Lobby() {
     }
 
     return (
-        <div className="Lobby">
+        <div className={styles.container}>
             <h1>Lobby</h1>
             <Box sx={{ flexGrow: 1 }}>
                 <Grid container spacing={5}>

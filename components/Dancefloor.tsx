@@ -10,8 +10,8 @@ export default function Dancefloor(props: any) {
         }}>
             <Box sx={{ width: 'auto' }}>
                 {
-                    Object.keys(props.users).map((userId, key) =>
-                        <Dancer user={props.users[userId]} key={key} />
+                    props.users.map((user: any, key: any) =>
+                        <Dancer user={user} key={key} />
                     )
                 }
             </Box>

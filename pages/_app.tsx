@@ -2,7 +2,7 @@ import '../styles/globals.css'
 import type { AppProps } from 'next/app'
 import { CurrentUserWrapper } from '../context/CurrentUserContext'
 
-function Home({ Component, pageProps }: AppProps) {
+function MyApp({ Component, pageProps }: AppProps) {
   return (
     <CurrentUserWrapper>
       <Component {...pageProps} />
@@ -10,4 +10,4 @@ function Home({ Component, pageProps }: AppProps) {
   )
 }
 
-export default Home
+export default MyApp

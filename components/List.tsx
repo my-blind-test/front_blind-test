@@ -11,15 +11,13 @@ function renderRow(props: ListChildComponentProps) {
     return (
         <ListItem style={style} key={index} component="div" disablePadding>
             <ListItemButton>
-                <ListItemText primary={data[Object.keys(data)[index]].name} />
+                <ListItemText primary={data[index].name} />
             </ListItemButton>
         </ListItem>
     );
 }
 
 export default function List(props: any) {
-    const dataCount = Object.keys(props.data).length
-
     return (
         <div>
             <h3>{props.listName}</h3>
@@ -30,7 +28,7 @@ export default function List(props: any) {
                     height={300}
                     width={250}
                     itemSize={() => 50}
-                    itemCount={dataCount}
+                    itemCount={props.data.length}
                     overscanCount={5}
                     itemData={props.data}
                 >

@@ -14,7 +14,7 @@ export default function Register() {
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget)
-        const response = await api.post("/auth/register",
+        const response = await api.register(
             {
                 username: data.get('username'),
                 password: data.get('password')

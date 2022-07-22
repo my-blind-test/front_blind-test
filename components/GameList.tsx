@@ -4,20 +4,26 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import { VariableSizeList, ListChildComponentProps } from 'react-window';
+import { useRouter } from 'next/router';
 
-function renderRow(props: ListChildComponentProps) {
+function Game(props: ListChildComponentProps) {
     const { data, index, style } = props;
+    const router = useRouter();
+
+    const joinGame = () => {
+        router.push(`/game?id=${data[index].id}`);
+    }
 
     return (
         <ListItem style={style} key={index} component="div" disablePadding>
             <ListItemButton>
-                <ListItemText primary={data[index].name} />
+                <ListItemText primary={data[index].name} onClick={() => { joinGame() }} />
             </ListItemButton>
         </ListItem>
     );
 }
 
-export default function List(props: any) {
+export default function GameList(props: any) {
     return (
         <div>
             <h3>{props.listName}</h3>
@@ -32,7 +38,7 @@ export default function List(props: any) {
                     overscanCount={5}
                     itemData={props.data}
                 >
-                    {renderRow}
+                    {Game}
                 </VariableSizeList>
             </Box>
         </div>

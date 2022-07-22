@@ -3,13 +3,12 @@ import { useEffect, useRef, useState } from 'react';
 import { io } from 'socket.io-client';
 import CreateGame from '../components/CreateGame';
 import Dancefloor from '../components/Dancefloor';
-import List from '../components/List';
+import List from '../components/GameList';
 import styles from '../styles/Home.module.css'
 import { getStoredAccessToken } from '../utils/accessToken';
 
-//Voir les petits bonhommes de tout le monde au lobby (only les 20 plus haut lvl)
+// Voir les petits bonhommes de tout le monde au lobby (only les 20 plus haut lvl)
 // update/delete une Game
-// Rejoindre une game
 // Voir les petits bonhomes de tout le monde dans la game
 // Envoyer des messages dans la game
 // Avoir un scoreboard dans la game
@@ -24,28 +23,22 @@ export default function Lobby() {
     const socket: any = useRef(null)
 
     useEffect(() => {
-        if (!socket.current) {
-            socket.current = io("http://localhost:3000/lobby", {
-                auth: {
-                    token: getStoredAccessToken()
-                }
-            });
-        }
+        socket.current = io("http://localhost:3000/lobby", {
+            auth: {
+                token: getStoredAccessToken()
+            }
+        });
 
         return () => {
-            if (!socket.current)
-                return
-            socket.current.off('connect');
-            socket.current.off('disconnect');
-            socket.current.off('userJoined');
-            socket.current.off('userLeft');
-            socket.current.off('newGame');
-            socket.current.off('connect_error');
+            if (socket.current)
+                socket.current.disconnect();
         };
     }, [])
 
     useEffect(() => {
         if (socket.current) {
+            socket.current.removeAllListeners();
+
             socket.current.on('connect', () => {
                 socket.current.emit('users', null, (response: any) => {
                     setConnectedUsers([...connectedUsers, ...response.content])
@@ -57,6 +50,9 @@ export default function Lobby() {
             });
 
             socket.current.on('disconnect', () => {
+                //Ramener à la page home
+                // Ca se passe si le jwt n'est pas bon à la connexion et peut etre dans un autre cas
+                // Donc peut etre check le JWT à l'entré du lobby
             });
 
             socket.current.on('userJoined', (data: any) => { //TODO : créer un type/interface data
@@ -68,8 +64,11 @@ export default function Lobby() {
             });
 
             socket.current.on('newGame', (data: any) => {
-                console.log(data)
                 setGames([...games, data])
+            });
+
+            socket.current.on('gameDeleted', (data: any) => {
+                setGames(games.filter(game => game.id !== data));
             });
 
             socket.current.on("connect_error", (err: any) => {
@@ -79,8 +78,8 @@ export default function Lobby() {
         }
     }, [games, connectedUsers])
 
-    const onCreateGame = (name: string, password: string) => {
-        socket.current.emit("createGame", { name, password }, (response: any) => {
+    const onCreateGame = (name: string, password: string, playlistUrl: string) => {
+        socket.current.emit("createGame", { name, password, playlistUrl }, (response: any) => {
             setErrorMessage(response.status === 'OK' ? "" : response.content)
         })
     }
@@ -94,7 +93,7 @@ export default function Lobby() {
                         <List listName="Games" data={games} />
                     </Grid>
                     <Grid item xs>
-                        <CreateGame onCreateGame={(name: string, password: string) => onCreateGame(name, password)} />
+                        <CreateGame onCreateGame={(name: string, password: string, playlistUrl: string) => onCreateGame(name, password, playlistUrl)} />
                         {errorMessage &&
                             <Alert variant="outlined" severity="error" sx={{ mt: 2, mb: 2, display: 'line' }} >
                                 {errorMessage}

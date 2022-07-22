@@ -9,7 +9,7 @@ export default function CreateGame(props: any) {
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget)
-        props.onCreateGame(data.get('name'), data.get('password'))
+        props.onCreateGame(data.get('name'), data.get('password'), data.get('playlistUrl'))
     };
 
     return (
@@ -35,13 +35,22 @@ export default function CreateGame(props: any) {
                         </Grid>
                         <Grid item xs={12}>
                             <TextField
-                                required
                                 fullWidth
                                 name="password"
                                 label="Password"
                                 type="password"
                                 id="password"
                                 autoComplete="password"
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                required
+                                fullWidth
+                                name="playlistUrl"
+                                label="Url"
+                                id="playlistUrl"
+                                defaultValue="https://open.spotify.com/playlist/5vbfBI3A8OtZQzSihKjqai?si=_IAl784ZQF6punIrewBd-A"
                             />
                         </Grid>
                     </Grid>

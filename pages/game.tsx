@@ -78,7 +78,23 @@ export default function Game() {
             });
 
             socket.current.on('guess', (data: any) => {
-                console.log("Guess", data)
+                switch (data.answer) {
+                    case 'none':
+                        console.log(`Player ${data.clientId} guessed ${data.guess} : FAIL`)
+                        break;
+                    case 'song':
+                        console.log(`Player ${data.clientId} Found the name of the song`)
+                        break;
+                    case 'artist':
+                        console.log(`Player ${data.clientId} Found the name of the artist`)
+                        break;
+                    case 'both':
+                        console.log(`Player ${data.clientId} Found both of song name and artist`)
+                        break;
+
+                }
+                if (data.answer)
+                    console.log("Guess", data)
             });
 
             socket.current.on('message', (data: any) => {

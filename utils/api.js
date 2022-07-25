@@ -3,6 +3,9 @@ import { getStoredAccessToken } from "./accessToken";
 
 const defaults = {
   baseURL: process.env.API_URL || "http://localhost:3000",
+  registerHeaders: () => ({
+    "Content-Type": "application/json",
+  }),
   headers: () => ({
     "Content-Type": "application/json",
     Authorization: getStoredAccessToken()
@@ -16,32 +19,9 @@ const api = (method, url, variables) =>
     axios({
       url: `${defaults.baseURL}${url}`,
       method,
-      headers: defaults.headers(),
+      headers: url === "/auth/register" ? defaults.registerHeaders() : defaults.headers(),
       params: method === "get" ? variables : undefined,
       data: method !== "get" ? variables : undefined,
-    }).then(
-      (response) => {
-        resolve(response.data);
-      },
-      (error) => {
-        const response = {
-          status: error.response.status,
-          message: error.response.statusText,
-        };
-        reject(response);
-      }
-    );
-  });
-
-const register = (variables) =>
-  new Promise((resolve, reject) => {
-    axios({
-      url: `${defaults.baseURL}/auth/register`,
-      methods: "post",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      data: variables,
     }).then(
       (response) => {
         resolve(response.data);
@@ -62,7 +42,6 @@ const methods = {
   put: (...args) => api("put", ...args),
   patch: (...args) => api("patch", ...args),
   delete: (...args) => api("delete", ...args),
-  register: (...args) => register(...args),
 };
 
 export default methods;

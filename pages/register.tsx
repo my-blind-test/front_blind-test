@@ -14,15 +14,14 @@ export default function Register() {
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget)
-        const response = await api.register(
+        const response = await api.post("/auth/register",
             {
-                username: data.get('username'),
+                name: data.get('username'),
                 password: data.get('password')
             })
             .catch((err) => {
-                console.log(err)
-                if (err.status === 400) {
-                    setErrorMessage(err.message)
+                if (err.status === 401) {
+                    setErrorMessage("Couldn't sign in, please check the credentials.")
                 } else {
                     setErrorMessage("An error occured, please try again later.")
                 }

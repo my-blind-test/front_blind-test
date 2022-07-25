@@ -15,28 +15,22 @@ export default function Game() {
     const { id } = router.query
 
     useEffect(() => {
-        const connection = async () => {
-            // audio.current = new Audio()
-            // audio.current.src = "https://open.spotify.com/track/04aAxqtGp5pv12UXAg4pkq?si=UvgfDbzOTmm40GbIheTkEg";
-            // audio.current.autoplay = false;
+        audio.current = new Audio()
 
-            socket.current = io("http://localhost:3000/game", {
-                auth: {
-                    token: getStoredAccessToken()
-                }
-            });
+        socket.current = io("http://localhost:3000/game", {
+            auth: {
+                token: getStoredAccessToken()
+            }
+        });
 
-            socket.current.emit("joinGame", { id }, (response: any) => {
-                if (response.status !== 'OK') {
-                    router.push(`/lobby`);
-                }
-                socket.current.emit('users', null, (response: any) => {
-                    setConnectedUsers(response.content)
-                })
+        socket.current.emit("joinGame", { id }, (response: any) => {
+            if (response.status !== 'OK') {
+                router.push(`/lobby`);
+            }
+            socket.current.emit('users', null, (response: any) => {
+                setConnectedUsers(response.content)
             })
-
-        }
-        connection()
+        })
 
         return () => {
             if (socket.current) {
@@ -67,6 +61,12 @@ export default function Game() {
 
             socket.current.on('gameStarted', (data: any) => {
                 setIsGameRunning(true);
+            });
+
+            socket.current.on('newTrack', (data: any) => {
+                console.log("New track")
+                audio.current.src = data.url
+                audio.current.play()
             });
 
             socket.current.on('gameFinished', (data: any) => {

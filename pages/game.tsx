@@ -27,12 +27,25 @@ export default function Game() {
             if (response.status !== 'OK') {
                 router.push(`/lobby`);
             }
-            socket.current.emit('users', null, (response: any) => {
-                setConnectedUsers(response.content)
-            })
+            if (response.content.gameStatus === 'running') {
+                setIsGameRunning(true)
+            } else {
+                audio.current.src = response.content.trackUrl
+                audio.current.play() //Embetant parce que l'user n'a pas encore crée interact, il faudrait emit et recevoir autre chose
+            }
+            setConnectedUsers(response.content.users)
+        })
+
+        socket.current.emit("gameStatus", null, (response: any) => {
+            if (response.status !== 'OK') {
+                router.push(`/lobby`);
+            }
         })
 
         return () => {
+            if (audio.current) {
+                audio.current.pause()
+            }
             if (socket.current) {
                 socket.current.disconnect();
             }
@@ -49,6 +62,7 @@ export default function Game() {
             });
 
             socket.current.on('disconnect', () => {
+                router.push(`/lobby`);
             });
 
             socket.current.on('userJoined', (data: any) => {
@@ -91,14 +105,11 @@ export default function Game() {
                     case 'both':
                         console.log(`Player ${data.clientId} Found both of song name and artist`)
                         break;
-
                 }
-                if (data.answer)
-                    console.log("Guess", data)
             });
 
             socket.current.on('message', (data: any) => {
-                console.log("message", data)
+                console.log(`Message from ${data.clientId} : ${data.message}`)
             });
 
             socket.current.on("connect_error", (err: any) => {
@@ -138,7 +149,7 @@ export default function Game() {
             {!isGameRunning && <Button variant="contained" onClick={startGame}>Start game</Button>}
             <Button variant="contained" onClick={deleteGame}>Delete game</Button>
             <Dancefloor users={connectedUsers} />
-            <TextField id="guess" label="Guess" variant="outlined" onKeyDown={guess} />
+            {isGameRunning && <TextField id="guess" label="Guess" variant="outlined" onKeyDown={guess} />}
             <TextField id="message" label="Message" variant="outlined" onKeyDown={message} />
         </div>
     )

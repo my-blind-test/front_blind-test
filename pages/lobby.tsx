@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { io } from 'socket.io-client';
 import CreateGame from '../components/CreateGame';
 import Dancefloor from '../components/Dancefloor';
-import List from '../components/GameList';
+import GameList from '../components/GameList';
 import styles from '../styles/Home.module.css'
 import { getStoredAccessToken } from '../utils/accessToken';
 
@@ -19,7 +19,7 @@ import { getStoredAccessToken } from '../utils/accessToken';
 export default function Lobby() {
     const [errorMessage, setErrorMessage] = useState("");
     const [connectedUsers, setConnectedUsers] = useState<{ name: string, id: string, clientId: string }[]>([]);
-    const [games, setGames] = useState<{ name: string, id: string }[]>([]);
+    const [games, setGames] = useState<any[]>([]); //Créer le type
     const socket: any = useRef(null)
 
     useEffect(() => {
@@ -71,6 +71,12 @@ export default function Lobby() {
                 setGames(games.filter(game => game.id !== data));
             });
 
+            socket.current.on('gameUpdated', (data: any) => {
+                const newGames = [...games]
+                newGames[games.findIndex(game => game.id === data.id)] = data
+                setGames(newGames);
+            });
+
             socket.current.on("connect_error", (err: any) => {
                 console.log("ERROR")
                 console.log(err)
@@ -90,7 +96,7 @@ export default function Lobby() {
             <Box sx={{ flexGrow: 1 }}>
                 <Grid container spacing={5}>
                     <Grid item xs>
-                        <List listName="Games" data={games} />
+                        <GameList data={games} />
                     </Grid>
                     <Grid item xs>
                         <CreateGame onCreateGame={(name: string, password: string, playlistUrl: string) => onCreateGame(name, password, playlistUrl)} />

@@ -5,6 +5,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import { VariableSizeList, ListChildComponentProps } from 'react-window';
 import { useRouter } from 'next/router';
+import { Game } from '../utils/interfaces/Game';
 
 function Game(props: ListChildComponentProps) {
     const { data, index, style } = props;
@@ -23,7 +24,7 @@ function Game(props: ListChildComponentProps) {
     );
 }
 
-export default function GameList(props: any) {
+export default function GameList(props: { data: Game[] }) {
     return (
         <div>
             <h3>Games</h3>

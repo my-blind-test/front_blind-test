@@ -7,11 +7,12 @@ import GameList from '../components/GameList';
 import styles from '../styles/Home.module.css'
 import { getStoredAccessToken } from '../utils/accessToken';
 import { ConnectedUser } from '../utils/interfaces/ConnectedUser';
+import { Game } from '../utils/interfaces/Game';
 
 export default function Lobby() {
     const [errorMessage, setErrorMessage] = useState("");
     const [connectedUsers, setConnectedUsers] = useState<ConnectedUser[]>([]);
-    const [games, setGames] = useState<any[]>([]); //Créer le type
+    const [games, setGames] = useState<Game[]>([]);
     const socket: any = useRef(null)
 
     useEffect(() => {
@@ -36,6 +37,7 @@ export default function Lobby() {
                     setConnectedUsers([...connectedUsers, ...response.content])
                 })
                 socket.current.emit('games', null, (response: any) => {
+                    console.log(response.content[0])
                     setGames([...games, ...response.content])
                 })
                 console.log("Connected")

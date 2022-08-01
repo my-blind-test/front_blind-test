@@ -7,6 +7,7 @@ import ScoreBoard from '../components/ScoreBoard';
 import styles from '../styles/Home.module.css'
 import { getStoredAccessToken } from '../utils/accessToken';
 import { ConnectedUser } from '../utils/interfaces/ConnectedUser';
+import { GameStatus } from '../utils/interfaces/Game';
 
 export default function Game() {
     const [connectedUsers, setConnectedUsers] = useState<ConnectedUser[]>([])
@@ -29,7 +30,7 @@ export default function Game() {
             if (response.status !== 'OK') {
                 router.push(`/lobby`);
             }
-            if (response.content?.gameStatus === 'running') {
+            if (response.content?.gameStatus === GameStatus.RUNNING) {
                 setIsGameRunning(true)
             } else {
                 audio.current.src = response.content.trackUrl

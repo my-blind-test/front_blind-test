@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
 import { io } from 'socket.io-client';
 import Dancefloor from '../components/Dancefloor'
+import ScoreBoard from '../components/ScoreBoard';
 import styles from '../styles/Home.module.css'
 import { getStoredAccessToken } from '../utils/accessToken';
 
@@ -62,7 +63,7 @@ export default function Game() {
             });
 
             socket.current.on('disconnect', () => {
-                router.push(`/lobby`);
+                // router.push(`/lobby`);
             });
 
             socket.current.on('userJoined', (data: any) => {
@@ -129,7 +130,6 @@ export default function Game() {
 
     const guess = (e: any) => {
         if (e.keyCode == 13) {
-            console.log("send guess")
             socket.current.emit('guess', e.target.value)
             e.target.value = ""
         }
@@ -137,7 +137,6 @@ export default function Game() {
 
     const message = (e: any) => {
         if (e.keyCode == 13) {
-            console.log("Send message")
             socket.current.emit('message', e.target.value)
             e.target.value = ""
         }
@@ -146,6 +145,7 @@ export default function Game() {
     return (
         <div className={styles.container}>
             <h1>Game</h1>
+            {isGameRunning && <ScoreBoard data={connectedUsers} />}
             {!isGameRunning && <Button variant="contained" onClick={startGame}>Start game</Button>}
             <Button variant="contained" onClick={deleteGame}>Delete game</Button>
             <Dancefloor users={connectedUsers} />

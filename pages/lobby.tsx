@@ -42,6 +42,7 @@ export default function Lobby() {
             socket.current.on('connect', () => {
                 socket.current.emit('users', null, (response: any) => {
                     setConnectedUsers([...connectedUsers, ...response.content])
+                    console.log(response.content)
                 })
                 socket.current.emit('games', null, (response: any) => {
                     setGames([...games, ...response.content])

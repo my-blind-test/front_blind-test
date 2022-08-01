@@ -4,29 +4,24 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import { VariableSizeList, ListChildComponentProps } from 'react-window';
-import { useRouter } from 'next/router';
 
-function Game(props: ListChildComponentProps) {
+function User(props: ListChildComponentProps) {
     const { data, index, style } = props;
-    const router = useRouter();
-
-    const joinGame = () => {
-        router.push(`/game?id=${data[index].id}`);
-    }
 
     return (
         <ListItem style={style} key={index} component="div" disablePadding>
             <ListItemButton>
-                <ListItemText primary={data[index].name} secondary={`${data[index].status} : ${data[index].connectedUsers.length || 0} players connected`} onClick={() => { joinGame() }} />
+                <ListItemText primary={data[index].name} secondary={`${data[index].score} points`} />
             </ListItemButton>
         </ListItem>
     );
 }
 
-export default function GameList(props: any) {
+export default function ScoreBoard(props: any) {
+    console.log(props.data)
     return (
         <div>
-            <h3>Games</h3>
+            <h3>Score board</h3>
             <Box
                 sx={{ width: '100%', height: 300, maxWidth: 250, bgcolor: 'background.paper' }}
             >
@@ -35,10 +30,9 @@ export default function GameList(props: any) {
                     width={250}
                     itemSize={() => 50}
                     itemCount={props.data.length}
-                    overscanCount={5}
                     itemData={props.data}
                 >
-                    {Game}
+                    {User}
                 </VariableSizeList>
             </Box>
         </div>

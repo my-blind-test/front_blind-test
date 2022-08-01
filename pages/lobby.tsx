@@ -6,19 +6,11 @@ import Dancefloor from '../components/Dancefloor';
 import GameList from '../components/GameList';
 import styles from '../styles/Home.module.css'
 import { getStoredAccessToken } from '../utils/accessToken';
-
-// Voir les petits bonhommes de tout le monde au lobby (only les 20 plus haut lvl)
-// update/delete une Game
-// Voir les petits bonhomes de tout le monde dans la game
-// Envoyer des messages dans la game
-// Avoir un scoreboard dans la game
-// Deviner une musique dans la game
-// Jouer une musique dans la game
-// Déguiser les petits bonhommes
+import { ConnectedUser } from '../utils/interfaces/ConnectedUser';
 
 export default function Lobby() {
     const [errorMessage, setErrorMessage] = useState("");
-    const [connectedUsers, setConnectedUsers] = useState<{ name: string, id: string, clientId: string }[]>([]);
+    const [connectedUsers, setConnectedUsers] = useState<ConnectedUser[]>([]);
     const [games, setGames] = useState<any[]>([]); //Créer le type
     const socket: any = useRef(null)
 
@@ -42,7 +34,6 @@ export default function Lobby() {
             socket.current.on('connect', () => {
                 socket.current.emit('users', null, (response: any) => {
                     setConnectedUsers([...connectedUsers, ...response.content])
-                    console.log(response.content)
                 })
                 socket.current.emit('games', null, (response: any) => {
                     setGames([...games, ...response.content])
@@ -56,7 +47,7 @@ export default function Lobby() {
                 // Donc peut etre check le JWT à l'entré du lobby
             });
 
-            socket.current.on('userJoined', (data: any) => { //TODO : créer un type/interface data
+            socket.current.on('userJoined', (data: ConnectedUser) => {
                 setConnectedUsers([...connectedUsers, data])
             });
 

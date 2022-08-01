@@ -6,9 +6,10 @@ import Dancefloor from '../components/Dancefloor'
 import ScoreBoard from '../components/ScoreBoard';
 import styles from '../styles/Home.module.css'
 import { getStoredAccessToken } from '../utils/accessToken';
+import { ConnectedUser } from '../utils/interfaces/ConnectedUser';
 
 export default function Game() {
-    const [connectedUsers, setConnectedUsers] = useState<{ name: string, id: string, clientId: string, score: number }[]>([])
+    const [connectedUsers, setConnectedUsers] = useState<ConnectedUser[]>([])
     const [isGameRunning, setIsGameRunning] = useState<boolean>(false)
     const socket: any = useRef(null)
     const audio: any = useRef(null)
@@ -28,7 +29,7 @@ export default function Game() {
             if (response.status !== 'OK') {
                 router.push(`/lobby`);
             }
-            if (response.content.gameStatus === 'running') {
+            if (response.content?.gameStatus === 'running') {
                 setIsGameRunning(true)
             } else {
                 audio.current.src = response.content.trackUrl
@@ -66,7 +67,7 @@ export default function Game() {
                 // router.push(`/lobby`);
             });
 
-            socket.current.on('userJoined', (data: any) => {
+            socket.current.on('userJoined', (data: ConnectedUser) => {
                 setConnectedUsers([...connectedUsers, data])
             });
 

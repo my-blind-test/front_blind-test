@@ -19,7 +19,7 @@ function Game(props: ListChildComponentProps) {
     return (
         <ListItem style={style} key={index} component="div" disablePadding>
             <ListItemButton>
-                <ListItemText primary={data[index].name} secondary={`${data[index].connectedUsers?.length || 0} players connected`} onClick={() => { joinGame() }} />
+                <ListItemText primary={data[index].name} secondary={`${data[index].status} : ${data[index].connectedUsers.length || 0} players connected`} onClick={() => { joinGame() }} />
             </ListItemButton>
         </ListItem>
     );

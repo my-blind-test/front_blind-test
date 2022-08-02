@@ -4,7 +4,6 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import { VariableSizeList, ListChildComponentProps } from 'react-window';
-import { ConnectedUser } from '../utils/interfaces/ConnectedUser';
 
 function User(props: ListChildComponentProps) {
     const { data, index, style } = props;
@@ -18,7 +17,8 @@ function User(props: ListChildComponentProps) {
     );
 }
 
-export default function ScoreBoard(props: { data: ConnectedUser[] }) {
+export default function ScoreBoard(props: { data: { name: string, score: number }[] }) {
+    console.log(props.data)
     return (
         <div>
             <h3>Score board</h3>

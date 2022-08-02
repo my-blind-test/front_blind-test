@@ -37,7 +37,6 @@ export default function Lobby() {
                     setConnectedUsers([...connectedUsers, ...response.content])
                 })
                 socket.current.emit('games', null, (response: any) => {
-                    console.log(response.content[0])
                     setGames([...games, ...response.content])
                 })
                 console.log("Connected")

@@ -1,10 +1,12 @@
 import { Box, Container, Grid } from '@mui/material';
+import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import { io } from 'socket.io-client';
 import GameList from '../components/GameList';
+import UserPreview from '../components/UserPreview';
 import { getStoredAccessToken } from '../utils/accessToken';
 import { ConnectedUser } from '../utils/interfaces/ConnectedUser';
-import { Game, GameStatus } from '../utils/interfaces/Game';
+import { Game } from '../utils/interfaces/Game';
 
 export default function Lobby() {
     const [connectedUsers, setConnectedUsers] = useState<ConnectedUser[]>([]);
@@ -89,12 +91,7 @@ export default function Lobby() {
                     <GameList data={games} onCreateGame={onCreateGame} />
                 </Grid>
                 <Grid item xs={12} md={6} lg={4}>
-                    <Box
-                        sx={{
-                            height: '900px',
-                            backgroundColor: 'green',
-                        }}
-                    />
+                    <UserPreview />
                 </Grid>
                 <Grid item xs={12} md={12} lg={4}>
                     <Box

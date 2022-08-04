@@ -8,7 +8,7 @@ import { useRouter } from 'next/router';
 import { Game } from '../utils/interfaces/Game';
 import { Avatar, Button, Container, Grid, List, ListItemAvatar, ListItemIcon } from '@mui/material';
 import LockIcon from '@mui/icons-material/Lock';
-import CreateGameModal from './CreateGame';
+import CreateGameModal from './CreateGameModal';
 
 function GamePreview(props: { game: Game }) {
     const router = useRouter();
@@ -48,9 +48,9 @@ export default function GameList(props: { data: Game[], onCreateGame: Function }
     }
 
     return (
-        <Container sx={{ backgroundColor: 'green' }}>
+        <Container sx={{ mt: 15, backgroundColor: 'green' }}>
             {createGameModalOpen && <CreateGameModal open={createGameModalOpen} onModalClose={onModalClose} onCreateGame={props.onCreateGame} />}
-            <Grid container rowSpacing={8} direction="column" sx={{}}>
+            <Grid container rowSpacing={15} direction="column" sx={{}}>
                 <Grid item container spacing={2} rowSpacing={8} > {/*TODO : align center*/}
                     <Grid item xs={6}>
                         <Button variant="contained" sx={{ borderRadius: '8%/50%', width: '70%' }}>Play</Button>

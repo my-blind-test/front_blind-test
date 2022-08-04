@@ -1,4 +1,4 @@
-import { Box, Container, Grid } from '@mui/material';
+import { Box, Container, Grid, Typography } from '@mui/material';
 import GameList from '../components/GameList';
 import UserPreview from '../components/UserPreview';
 
@@ -15,10 +15,13 @@ export default function Lobby() {
                 <Grid item xs={12} md={12} lg={4}>
                     <Box
                         sx={{
-                            height: '500px',
-                            backgroundColor: 'green',
+                            border: 2   ,
+                            borderRadius: '10%',
+                            width: '80%',
+                            height: '700px',
                         }}
-                    />
+                    >
+                    </Box>
                 </Grid>
             </Grid>
         </Container>

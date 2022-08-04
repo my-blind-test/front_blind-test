@@ -1,4 +1,4 @@
-import { Button, TextField } from '@mui/material';
+import { Box, Button, Container, Grid, TextField } from '@mui/material';
 import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
 import { io } from 'socket.io-client';
@@ -145,14 +145,56 @@ export default function Game() {
     }
 
     return (
-        <div className={styles.container}>
-            <h1>Game</h1>
-            {isGameRunning && <ScoreBoard data={connectedUsers} />}
-            {!isGameRunning && <Button variant="contained" onClick={startGame}>Start game</Button>}
-            <Button variant="contained" onClick={deleteGame}>Delete game</Button>
-            <Dancefloor users={connectedUsers} />
-            {isGameRunning && <TextField id="guess" label="Guess" variant="outlined" onKeyDown={guess} />}
-            <TextField id="message" label="Message" variant="outlined" onKeyDown={message} />
-        </div>
-    )
+        <Container maxWidth={false} sx={{ flexGrow: 1 }}>
+            <Grid container spacing={2} alignItems="flex-start" sx={{ flexDirection: { xs: "column", sm: "row" } }} >
+                <Grid item container direction={'column'} alignItems="center" xs={12} sm={9}>
+                    <Grid item xs={10}>
+                        <Box
+                            sx={{
+                                border: 2,
+                                borderRadius: '10%',
+                                width: '400px',
+                                height: '850px',
+                            }}
+                        />
+                    </Grid>
+                    <Grid item xs={2}>
+                        <Box
+                            sx={{
+                                border: 2,
+                                borderRadius: '10%',
+                                width: '70%',
+                                height: '50px',
+                            }}
+                        />
+                    </Grid>
+                    {/* Dancefloor */}
+                    {/* GUess field */}
+                </Grid>
+                <Grid item xs={12} sm={3}>
+                    <Box
+                        sx={{
+                            border: 2,
+                            borderRadius: '10%',
+                            width: '90%',
+                            height: '900px',
+                        }}
+                    />
+                    {/* Chat */}
+                </Grid>
+            </Grid>
+        </Container>
+    );
+
+    // return (
+    //     <div className={styles.container}>
+    //         <h1>Game</h1>
+    //         {/* {isGameRunning && <ScoreBoard data={connectedUsers} />} */}
+    //         {!isGameRunning && <Button variant="contained" onClick={startGame}>Start game</Button>}
+    //         <Button variant="contained" onClick={deleteGame}>Delete game</Button>
+    //         <Dancefloor users={connectedUsers} />
+    //         {isGameRunning && <TextField id="guess" label="Guess" variant="outlined" onKeyDown={guess} />}
+    //         <TextField id="message" label="Message" variant="outlined" onKeyDown={message} />
+    //     </div>
+    // )
 }

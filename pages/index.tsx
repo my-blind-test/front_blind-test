@@ -31,13 +31,6 @@ export default function Home() {
       <Link href="/lobby">
         Jouer
       </Link>
-      <p>{"Pour l'instant il n'y a pas grand chose mais à terme il y aura :"}</p>
-      <ul>
-        <li>{"Une fake partie qui tounne"}</li>
-        <li>{"Un super score board"}</li>
-        <li>{"Une explication des règles"}</li>
-        <li>{"Une explication de l'univers"}</li>
-      </ul>
       <ScoreBoard data={podium} />
     </div>
   )

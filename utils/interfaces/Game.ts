@@ -8,6 +8,7 @@ export enum GameStatus {
 export interface Game {
   name: string;
   id: string;
+  isPrivate: boolean;
   slots: number;
   status: GameStatus;
   adminId?: string;

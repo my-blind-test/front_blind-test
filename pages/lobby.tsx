@@ -1,16 +1,12 @@
-import { Alert, Box, Grid } from '@mui/material';
+import { Box, Container, Grid } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import { io } from 'socket.io-client';
-import CreateGame from '../components/CreateGame';
-import Dancefloor from '../components/Dancefloor';
 import GameList from '../components/GameList';
-import styles from '../styles/Home.module.css'
 import { getStoredAccessToken } from '../utils/accessToken';
 import { ConnectedUser } from '../utils/interfaces/ConnectedUser';
-import { Game } from '../utils/interfaces/Game';
+import { Game, GameStatus } from '../utils/interfaces/Game';
 
 export default function Lobby() {
-    const [errorMessage, setErrorMessage] = useState("");
     const [connectedUsers, setConnectedUsers] = useState<ConnectedUser[]>([]);
     const [games, setGames] = useState<Game[]>([]);
     const socket: any = useRef(null)
@@ -38,6 +34,7 @@ export default function Lobby() {
                 })
                 socket.current.emit('games', null, (response: any) => {
                     setGames([...games, ...response.content])
+                    console.log(response.content)
                 })
                 console.log("Connected")
             });
@@ -77,31 +74,37 @@ export default function Lobby() {
         }
     }, [games, connectedUsers])
 
-    const onCreateGame = (name: string, password: string, playlistUrl: string) => {
-        socket.current.emit("createGame", { name, password, playlistUrl }, (response: any) => {
-            setErrorMessage(response.status === 'OK' ? "" : response.content)
-        })
+    const onCreateGame = async (name: string, password: string, playlistUrl: string) => {
+        const response = await new Promise(resolve =>
+            socket.current.emit('createGame', { name, password, playlistUrl }, (response: any) => resolve(response))
+        )
+
+        return response
     }
 
     return (
-        <div className={styles.container}>
-            <h1>Lobby</h1>
-            <Box sx={{ flexGrow: 1 }}>
-                <Grid container spacing={5}>
-                    <Grid item xs>
-                        <GameList data={games} />
-                    </Grid>
-                    <Grid item xs>
-                        <CreateGame onCreateGame={(name: string, password: string, playlistUrl: string) => onCreateGame(name, password, playlistUrl)} />
-                        {errorMessage &&
-                            <Alert variant="outlined" severity="error" sx={{ mt: 2, mb: 2, display: 'line' }} >
-                                {errorMessage}
-                            </Alert>
-                        }
-                    </Grid>
+        <Container maxWidth={false} sx={{ flexGrow: 1 }}>
+            <Grid container spacing={2} direction="row" alignItems="flex-start">
+                <Grid item xs={12} md={6} lg={4}>
+                    <GameList data={games} onCreateGame={onCreateGame} />
                 </Grid>
-            </Box>
-            <Dancefloor users={connectedUsers} />
-        </div >
+                <Grid item xs={12} md={6} lg={4}>
+                    <Box
+                        sx={{
+                            height: '900px',
+                            backgroundColor: 'green',
+                        }}
+                    />
+                </Grid>
+                <Grid item xs={12} md={12} lg={4}>
+                    <Box
+                        sx={{
+                            height: '500px',
+                            backgroundColor: 'green',
+                        }}
+                    />
+                </Grid>
+            </Grid>
+        </Container>
     );
 }

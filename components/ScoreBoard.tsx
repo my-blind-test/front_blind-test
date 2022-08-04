@@ -1,9 +1,11 @@
-import * as React from 'react';
 import Box from '@mui/material/Box';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import { VariableSizeList, ListChildComponentProps } from 'react-window';
+import { User } from '../utils/interfaces/User';
+import api from "../utils/api"
+import { useEffect, useState } from 'react';
 
 function User(props: ListChildComponentProps) {
     const { data, index, style } = props;
@@ -17,8 +19,24 @@ function User(props: ListChildComponentProps) {
     );
 }
 
-export default function ScoreBoard(props: { data: { name: string, score: number }[] }) {
-    console.log(props.data)
+export default function ScoreBoard() {
+    const [podium, setPodium] = useState<User[]>([]);
+
+    useEffect(() => {
+      const getPodium = async () => {
+  
+        const response = await api.get("/users/podium").catch((err) => {
+          console.log(err)
+  
+          return undefined
+        })
+  
+        if (!response?.status)
+          setPodium(response)
+      }
+      getPodium()
+    }, [])
+
     return (
         <div>
             <h3>Score board</h3>
@@ -29,8 +47,8 @@ export default function ScoreBoard(props: { data: { name: string, score: number 
                     height={300}
                     width={250}
                     itemSize={() => 50}
-                    itemCount={props.data.length}
-                    itemData={props.data}
+                    itemCount={podium.length}
+                    itemData={podium}
                 >
                     {User}
                 </VariableSizeList>

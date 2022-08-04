@@ -9,20 +9,15 @@ import { useEffect, useRef, useState } from 'react';
 import { io } from 'socket.io-client';
 import { getStoredAccessToken } from '../utils/accessToken';
 import { Game } from '../utils/interfaces/Game';
+import JoinGameModal from './JoinGameModal';
 
-function GamePreview(props: { game: Game }) {
-    const router = useRouter();
-
-    const joinGame = () => {
-        router.push(`/game?id=${props.game.id}`);
-    }
-
+function GamePreview(props: { game: Game, onGameSelected: Function }) {
     return (
         <ListItem
             key={props.game.id}
             sx={{ marginBottom: "10px", borderRadius: '8%/50%', background: "blue" }}
         >
-            <ListItemButton onClick={() => { joinGame() }}>
+            <ListItemButton onClick={() => props.onGameSelected(props.game)}>
                 <ListItemAvatar>
                     <Avatar
                         alt={`Gaame id ${props.game.id}`}
@@ -41,9 +36,12 @@ function GamePreview(props: { game: Game }) {
 }
 
 export default function GameList() {
-    const [createGameModalOpen, setCreateGameModalOpen] = useState(false);
+    const [createModalOpen, setCreateModalOpen] = useState(false);
+    const [selectedGame, setSelectedGame] = useState<Game | undefined>();
+    const [joinModalOpen, setJoinModalOpen] = useState(false);
     const [games, setGames] = useState<Game[]>([]);
     const socket: any = useRef(null)
+    const router = useRouter();
 
     useEffect(() => {
         socket.current = io("http://localhost:3000/lobby", {
@@ -63,9 +61,10 @@ export default function GameList() {
             socket.current.removeAllListeners();
 
             socket.current.on('connect', () => {
+                setGames([])
+
                 socket.current.emit('games', null, (response: any) => {
                     setGames([...games, ...response.content])
-                    console.log(response.content)
                 })
                 console.log("Connected")
             });
@@ -97,6 +96,41 @@ export default function GameList() {
         }
     }, [games])
 
+    const onPlay = () => {
+        const openGames = games.filter(game => !game.isPrivate)
+
+        if (!openGames.length) {
+            console.log("Pas de games ouvertes") //TODO alert
+            return
+        }
+
+        router.push(`/game?id=${openGames[Math.floor(Math.random() * openGames.length)].id}`);
+    }
+
+    const onGameSelected = (game: Game) => {
+        if (!game.isPrivate) {
+            router.push(`/game?id=${game.id}`);
+        } else {
+            setSelectedGame(game)
+            setJoinModalOpen(true)
+        }
+    }
+
+    const onJoinGame = async (password: string) => {
+        if (!selectedGame)
+            return
+
+        const response: any = await new Promise(resolve =>
+            socket.current.emit('joinGame', { id: selectedGame.id, password }, (response: any) => resolve(response))
+        )
+
+        if (response.status === 'OK') {
+            router.push(`/game?id=${selectedGame.id}`);
+        }
+
+        return response
+    }
+
     const onCreateGame = async (name: string, password: string, playlistUrl: string) => {
         const response = await new Promise(resolve =>
             socket.current.emit('createGame', { name, password, playlistUrl }, (response: any) => resolve(response))
@@ -104,27 +138,33 @@ export default function GameList() {
 
         return response
     }
-    const onModalClose = (): void => {
-        setCreateGameModalOpen(false)
+
+    const onCreateModalClose = (): void => {
+        setCreateModalOpen(false)
+    }
+
+    const onJoinModalClose = (): void => {
+        setJoinModalOpen(false)
     }
 
     return (
         <Container sx={{ mt: 15, backgroundColor: 'green' }}>
-            {createGameModalOpen && <CreateGameModal open={createGameModalOpen} onModalClose={onModalClose} onCreateGame={onCreateGame} />}
+            {createModalOpen && <CreateGameModal open={createModalOpen} onModalClose={onCreateModalClose} onCreateGame={onCreateGame} />}
+            {joinModalOpen && <JoinGameModal open={joinModalOpen} onModalClose={onJoinModalClose} onJoinGame={onJoinGame} />}
             <Grid container rowSpacing={15} direction="column" sx={{}}>
                 <Grid item container spacing={2} rowSpacing={8} > {/*TODO : align center*/}
                     <Grid item xs={6}>
-                        <Button variant="contained" sx={{ borderRadius: '8%/50%', width: '70%' }}>Play</Button>
+                        <Button variant="contained" sx={{ borderRadius: '8%/50%', width: '70%' }} onClick={() => onPlay()} > Play</Button>
                     </Grid>
                     <Grid item xs={6}>
-                        <Button variant="outlined" sx={{ borderRadius: '8%/50%', width: '70%' }} onClick={() => setCreateGameModalOpen(true)}>New game</Button>
+                        <Button variant="outlined" sx={{ borderRadius: '8%/50%', width: '70%' }} onClick={() => setCreateModalOpen(true)}>New game</Button>
                     </Grid>
                 </Grid>
                 <Grid item xs={12}>
                     <List sx={{ overflow: 'auto', maxHeight: '600px', bgcolor: 'red' }}>
                         {
                             games.map((game: any, key: any) =>
-                                <GamePreview game={game} key={key} />
+                                <GamePreview game={game} onGameSelected={onGameSelected} key={key} />
                             )
                         }
                     </List>

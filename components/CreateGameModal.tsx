@@ -1,9 +1,9 @@
-import * as React from 'react';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import { Alert, Modal } from '@mui/material';
+import { useState } from 'react';
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -18,7 +18,7 @@ const style = {
 };
 
 export default function CreateGameModal(props: { open: boolean, onModalClose: () => void, onCreateGame: Function }) {
-    const [errorMessage, setErrorMessage] = React.useState("");
+    const [errorMessage, setErrorMessage] = useState("");
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -56,7 +56,6 @@ export default function CreateGameModal(props: { open: boolean, onModalClose: ()
                             label="Password"
                             type="password"
                             id="password"
-                            autoComplete="password"
                         />
                     </Grid>
                     <Grid item xs={12}>

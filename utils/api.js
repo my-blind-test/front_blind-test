@@ -3,7 +3,7 @@ import { getStoredAccessToken } from "./accessToken";
 
 const defaults = {
   baseURL: process.env.API_URL || "http://localhost:3000",
-  registerHeaders: () => ({
+  noAuthHeaders: () => ({
     "Content-Type": "application/json",
   }),
   headers: () => ({
@@ -19,7 +19,10 @@ const api = (method, url, variables) =>
     axios({
       url: `${defaults.baseURL}${url}`,
       method,
-      headers: url === "/auth/register" ? defaults.registerHeaders() : defaults.headers(),
+      headers:
+        url === "/auth/register" || url === "/users/podium"
+          ? defaults.noAuthHeaders()
+          : defaults.headers(),
       params: method === "get" ? variables : undefined,
       data: method !== "get" ? variables : undefined,
     }).then(

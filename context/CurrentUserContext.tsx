@@ -1,23 +1,15 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import api from "../utils/api"
 import { ConnectedUser, UserStatus } from '../utils/interfaces/ConnectedUser';
-
-const fakeUser: ConnectedUser = {
-  name: "Loading",
-  id: "0",
-  clientId: "0",
-  score: 0,
-  status: UserStatus.LOBBY
-}
 interface ICurrentUserContext {
-  currentUser: ConnectedUser;
+  currentUser?: ConnectedUser;
   fetchCurrentUser?: () => Promise<void>;
 };
 
-const CurrentUserContext = createContext<ICurrentUserContext>({ currentUser: fakeUser });
+const CurrentUserContext = createContext<ICurrentUserContext>({});
 
 export function CurrentUserWrapper({ children }: any) {
-  const [currentUser, setCurrentUser] = useState<ConnectedUser>(fakeUser)
+  const [currentUser, setCurrentUser] = useState<ConnectedUser>()
 
   const fetchCurrentUser = async () => {
     const response = await api.get("/users/me").catch((err) => {
@@ -27,6 +19,7 @@ export function CurrentUserWrapper({ children }: any) {
     })
 
     setCurrentUser(response)
+
   }
 
   useEffect(() => {

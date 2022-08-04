@@ -11,7 +11,7 @@ export default function UserPreview(props: any) {
             <Grid container direction="column" alignItems="center" sx={{}}>
                 <Grid item>
                     <Typography variant="h4">
-                        {currentUser.name}
+                        {currentUser?.name}
                     </Typography>
                 </Grid>
                 <Grid item>

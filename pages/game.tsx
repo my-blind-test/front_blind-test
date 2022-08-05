@@ -1,10 +1,8 @@
-import { Box, Button, Container, Grid, TextField } from '@mui/material';
+import { Box, Container, Grid, TextField } from '@mui/material';
 import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
 import { io } from 'socket.io-client';
 import Dancefloor from '../components/Dancefloor'
-import ScoreBoard from '../components/ScoreBoard';
-import styles from '../styles/Home.module.css'
 import { getStoredAccessToken } from '../utils/accessToken';
 import { ConnectedUser } from '../utils/interfaces/ConnectedUser';
 import { GameStatus } from '../utils/interfaces/Game';
@@ -130,57 +128,46 @@ export default function Game() {
         socket.current.emit('deleteGame', null)
     }
 
-    const guess = (e: any) => {
-        if (e.keyCode == 13) {
-            socket.current.emit('guess', e.target.value)
-            e.target.value = ""
+    const onTextInput = (event: any) => {
+        if (event.key == "Enter") {
+            socket.current.emit('guess', event.target.value)
+            event.target.value = ""
         }
     }
 
-    const message = (e: any) => {
-        if (e.keyCode == 13) {
-            socket.current.emit('message', e.target.value)
-            e.target.value = ""
-        }
+    const message = (e: React.ChangeEvent<HTMLInputElement>) => {
+        // if (e.keyCode == 13) {
+        //     socket.current.emit('message', e.target.value)
+        //     e.target.value = ""
+        // }
     }
 
     return (
-        <Container maxWidth={false} sx={{ flexGrow: 1 }}>
+        <Container maxWidth={false}>
             <Grid container spacing={2} alignItems="flex-start" sx={{ flexDirection: { xs: "column", sm: "row" } }} >
-                <Grid item container direction={'column'} alignItems="center" xs={12} sm={9}>
+                <Grid item container spacing={3} direction={'column'} xs={12} sm={9}
+                    display="flex"
+                    alignContent='center'
+                    justifyContent="center"
+                >
                     <Grid item xs={10}>
-                        <Box
-                            sx={{
-                                border: 2,
-                                borderRadius: '10%',
-                                width: '400px',
-                                height: '850px',
-                            }}
-                        />
+                        <Dancefloor />
                     </Grid>
                     <Grid item xs={2}>
-                        <Box
-                            sx={{
-                                border: 2,
-                                borderRadius: '10%',
-                                width: '70%',
-                                height: '50px',
-                            }}
-                        />
+                        <Container sx={{ background: 'yellow' }}>
+                            <TextField fullWidth autoFocus={true} onKeyUp={onTextInput} />
+                        </Container >
                     </Grid>
-                    {/* Dancefloor */}
-                    {/* GUess field */}
                 </Grid>
                 <Grid item xs={12} sm={3}>
                     <Box
                         sx={{
                             border: 2,
-                            borderRadius: '10%',
-                            width: '90%',
-                            height: '900px',
+                            borderRadius: '20px',
+                            width: '100%',
+                            height: '90vh',
                         }}
                     />
-                    {/* Chat */}
                 </Grid>
             </Grid>
         </Container>

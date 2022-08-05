@@ -4,7 +4,7 @@ import UserPreview from '../components/UserPreview';
 
 export default function Lobby() {
     return (
-        <Container maxWidth={false} sx={{ flexGrow: 1 }}>
+        <Container maxWidth={false}>
             <Grid container spacing={2} direction="row" alignItems="flex-start">
                 <Grid item xs={12} md={6} lg={4}>
                     <GameList />

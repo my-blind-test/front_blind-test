@@ -2,9 +2,7 @@ import { Grid, List, ListItem, ListItemText } from '@mui/material';
 import Container from '@mui/material/Container';
 import TextInput from './TextInput';
 
-export default function GameChat(props: any) {
-    const messages = ["First", "Raphael joined the battle", "New challenger", "tgmetmcdp", "New challenger", "tgmetmcdp", "allehopu", "Hello", "Raphael joined the battle", "New challenger", "tgmetmcdp", "allehopu", "New challenger", "tgmetmcdp", "allehopu", "New challenger", "tgmetmcdp", "allehopu", "New challenger", "tgmetmcdp", "Last",]
-
+export default function GameChat(props: { messages: string[], onMessage: Function }) {
     return (
         <Container maxWidth={false} sx={{ background: 'green' }}>
             <Grid container spacing={2}>
@@ -13,7 +11,7 @@ export default function GameChat(props: any) {
                     <List sx={{ overflow: 'clip', bgcolor: 'red', maxHeight: '70vh' }}
                     >
                         {
-                            messages.reverse().map((message: any, key: any) =>
+                            props.messages.reverse().map((message: string, key: number) =>
                                 <ListItem key={key}>
                                     <ListItemText primary={message} />
                                 </ListItem>

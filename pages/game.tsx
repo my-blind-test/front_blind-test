@@ -1,4 +1,4 @@
-import { Box, Container, Grid, TextField } from '@mui/material';
+import { Box, Button, Container, Grid, TextField } from '@mui/material';
 import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
 import { io } from 'socket.io-client';
@@ -12,6 +12,7 @@ import { GameStatus } from '../utils/interfaces/Game';
 export default function Game() {
     const [connectedUsers, setConnectedUsers] = useState<ConnectedUser[]>([])
     const [isGameRunning, setIsGameRunning] = useState<boolean>(false)
+    const [messages, setMessages] = useState<string[]>([])
     const socket: any = useRef(null)
     const audio: any = useRef(null)
     const router = useRouter();
@@ -70,24 +71,27 @@ export default function Game() {
 
             socket.current.on('userJoined', (data: ConnectedUser) => {
                 setConnectedUsers([...connectedUsers, data])
+                setMessages([...messages, `${data.name} joined the battle !`])
             });
 
             socket.current.on('userLeft', (data: any) => {
                 setConnectedUsers(connectedUsers.filter(connectedUser => connectedUser.clientId !== data));
+                setMessages([...messages, `${data.name} left the battle ...`])
             });
 
             socket.current.on('gameStarted', (data: any) => {
                 setIsGameRunning(true);
+                setMessages([...messages, `INFO : Game started`])
             });
 
             socket.current.on('newTrack', (data: any) => {
-                console.log("New track")
                 audio.current.src = data.url
                 audio.current.play()
+                setMessages([...messages, `INFO : New track playing`])
             });
 
             socket.current.on('gameFinished', (data: any) => {
-                console.log("GAME FINISHED", data)
+                setMessages([...messages, `INFO : Game finished`])
             });
 
             socket.current.on('gameDeleted', (data: any) => {
@@ -95,24 +99,28 @@ export default function Game() {
             });
 
             socket.current.on('guess', (data: any) => {
+                const user: ConnectedUser | undefined = connectedUsers.find(user => user.clientId === data.clientId)
+
                 switch (data.answer) {
                     case 'none':
-                        console.log(`Player ${data.clientId} guessed ${data.guess} : FAIL`)
+                        setMessages([...messages, `${user?.name} guessed ${data.guess} : FAIL`])
                         break;
                     case 'song':
-                        console.log(`Player ${data.clientId} Found the name of the song`)
+                        setMessages([...messages, `${user?.name} Found the name of the song`])
                         break;
                     case 'artist':
-                        console.log(`Player ${data.clientId} Found the name of the artist`)
+                        setMessages([...messages, `${user?.name} Found the name of the artist`])
                         break;
                     case 'both':
-                        console.log(`Player ${data.clientId} Found both of song name and artist`)
+                        setMessages([...messages, `${user?.name} Found both of song name and artist`])
                         break;
                 }
             });
 
             socket.current.on('message', (data: any) => {
-                console.log(`Message from ${data.clientId} : ${data.message}`)
+                const user: ConnectedUser | undefined = connectedUsers.find(user => user.clientId === data.clientId)
+
+                setMessages([...messages, `${user?.name} : ${data.message}`])
             });
 
             socket.current.on("connect_error", (err: any) => {
@@ -120,14 +128,10 @@ export default function Game() {
                 console.log(err)
             });
         }
-    }, [connectedUsers, router])
+    }, [connectedUsers, messages, router])
 
     const startGame = () => {
         socket.current.emit('startGame', null)
-    }
-
-    const deleteGame = () => {
-        socket.current.emit('deleteGame', null)
     }
 
     const onGuess = (guess: string) => {
@@ -147,31 +151,27 @@ export default function Game() {
                     justifyContent="center"
                 >
                     <Grid item xs={10}>
-                        <Dancefloor />
+                        <Dancefloor users={connectedUsers} />
                     </Grid>
-                    <Grid item xs={2}>
-                        <TextInput onInputValidated={onGuess} />
+                    <Grid item xs={2} display="flex"
+                        alignContent='center'
+                        justifyContent="center"
+                    >
+                        {isGameRunning &&
+                            <TextInput onInputValidated={onGuess} />
+                        }
+                        {!isGameRunning &&
+                            <Button variant="contained" sx={{ borderRadius: '8%/50%', width: '70%', maxWidth: '300px' }} onClick={() => startGame()} > Play</Button>
+                        }
                     </Grid>
                 </Grid>
                 <Grid item xs={12} sm={3}
                     display="flex"
                     alignItems='flex-end'
                 >
-                    <GameChat onMessage={onMessage} />
+                    <GameChat messages={messages} onMessage={onMessage} />
                 </Grid>
             </Grid>
         </Container>
     );
-
-    // return (
-    //     <div className={styles.container}>
-    //         <h1>Game</h1>
-    //         {/* {isGameRunning && <ScoreBoard data={connectedUsers} />} */}
-    //         {!isGameRunning && <Button variant="contained" onClick={startGame}>Start game</Button>}
-    //         <Button variant="contained" onClick={deleteGame}>Delete game</Button>
-    //         <Dancefloor users={connectedUsers} />
-    //         {isGameRunning && <TextField id="guess" label="Guess" variant="outlined" onKeyDown={guess} />}
-    //         <TextField id="message" label="Message" variant="outlined" onKeyDown={message} />
-    //     </div>
-    // )
 }

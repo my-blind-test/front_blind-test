@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
 import { io } from 'socket.io-client';
 import Dancefloor from '../components/Dancefloor'
+import TextInput from '../components/TextInput';
 import { getStoredAccessToken } from '../utils/accessToken';
 import { ConnectedUser } from '../utils/interfaces/ConnectedUser';
 import { GameStatus } from '../utils/interfaces/Game';
@@ -128,11 +129,8 @@ export default function Game() {
         socket.current.emit('deleteGame', null)
     }
 
-    const onTextInput = (event: any) => {
-        if (event.key == "Enter") {
-            socket.current.emit('guess', event.target.value)
-            event.target.value = ""
-        }
+    const onGuess = (guess: string) => {
+        socket.current.emit('guess', guess)
     }
 
     const message = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -154,9 +152,7 @@ export default function Game() {
                         <Dancefloor />
                     </Grid>
                     <Grid item xs={2}>
-                        <Container sx={{ background: 'yellow' }}>
-                            <TextField fullWidth autoFocus={true} onKeyUp={onTextInput} />
-                        </Container >
+                        <TextInput onInputValidated={onGuess} />
                     </Grid>
                 </Grid>
                 <Grid item xs={12} sm={3}>

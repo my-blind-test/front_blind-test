@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
 import { io } from 'socket.io-client';
 import Dancefloor from '../components/Dancefloor'
+import GameChat from '../components/GameChat';
 import TextInput from '../components/TextInput';
 import { getStoredAccessToken } from '../utils/accessToken';
 import { ConnectedUser } from '../utils/interfaces/ConnectedUser';
@@ -133,16 +134,13 @@ export default function Game() {
         socket.current.emit('guess', guess)
     }
 
-    const message = (e: React.ChangeEvent<HTMLInputElement>) => {
-        // if (e.keyCode == 13) {
-        //     socket.current.emit('message', e.target.value)
-        //     e.target.value = ""
-        // }
+    const onMessage = (message: string) => {
+        socket.current.emit('message', message)
     }
 
     return (
         <Container maxWidth={false}>
-            <Grid container spacing={2} alignItems="flex-start" sx={{ flexDirection: { xs: "column", sm: "row" } }} >
+            <Grid container spacing={2} alignItems="center" sx={{ flexDirection: { xs: "column", sm: "row" } }}>
                 <Grid item container spacing={3} direction={'column'} xs={12} sm={9}
                     display="flex"
                     alignContent='center'
@@ -155,15 +153,11 @@ export default function Game() {
                         <TextInput onInputValidated={onGuess} />
                     </Grid>
                 </Grid>
-                <Grid item xs={12} sm={3}>
-                    <Box
-                        sx={{
-                            border: 2,
-                            borderRadius: '20px',
-                            width: '100%',
-                            height: '90vh',
-                        }}
-                    />
+                <Grid item xs={12} sm={3}
+                    display="flex"
+                    alignItems='flex-end'
+                >
+                    <GameChat onMessage={onMessage} />
                 </Grid>
             </Grid>
         </Container>

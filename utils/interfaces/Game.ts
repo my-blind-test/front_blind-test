@@ -11,6 +11,5 @@ export interface Game {
   isPrivate: boolean;
   slots: number;
   status: GameStatus;
-  adminId?: string;
   connectedUsers: ConnectedUser[];
 }

@@ -19,6 +19,8 @@ export default function Game() {
     const { id } = router.query
 
     useEffect(() => {
+        if (socket.current) return
+
         audio.current = new Audio()
 
         socket.current = io("http://localhost:3000/game", {
@@ -31,13 +33,14 @@ export default function Game() {
             if (response.status !== 'OK') {
                 router.push(`/lobby`);
             }
+            setConnectedUsers(response.content.users)
+
             if (response.content?.gameStatus === GameStatus.RUNNING) {
                 setIsGameRunning(true)
             } else {
                 audio.current.src = response.content.trackUrl
                 audio.current.play() //Embetant parce que l'user n'a pas encore crée interact, il faudrait emit et recevoir autre chose
             }
-            setConnectedUsers(response.content.users)
         })
 
         socket.current.emit("gameStatus", null, (response: any) => {
@@ -124,7 +127,6 @@ export default function Game() {
             });
 
             socket.current.on("connect_error", (err: any) => {
-                console.log("ERROR")
                 console.log(err)
             });
         }

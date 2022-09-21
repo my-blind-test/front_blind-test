@@ -1,7 +1,6 @@
 import styles from '../styles/Home.module.css'
 import Link from 'next/link'
 import HomeBar from '../components/HomeBar'
-import ScoreBoard from '../components/ScoreBoard'
 
 export default function Home() {
   return (
@@ -11,7 +10,6 @@ export default function Home() {
       <Link href="/lobby">
         Jouer
       </Link>
-      <ScoreBoard />
     </div>
   )
 }

@@ -18,12 +18,6 @@ function GamePreview(props: { game: Game, onGameSelected: Function }) {
             sx={{ marginBottom: "10px", borderRadius: '8%/50%', background: "blue" }}
         >
             <ListItemButton onClick={() => props.onGameSelected(props.game)}>
-                <ListItemAvatar>
-                    <Avatar
-                        alt={`Gaame id ${props.game.id}`}
-                        src={`/public/vercel.svg`}
-                    />
-                </ListItemAvatar>
                 <ListItemText primary={props.game.name} secondary={`${props.game.connectedUsers?.length || 0}/${props.game.slots}`} />
                 {props.game.isPrivate &&
                     <ListItemIcon>
